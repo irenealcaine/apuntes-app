@@ -1,0 +1,188 @@
+.note-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.note-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.note-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: var(--spacing-xs) 0;
+  transition: color 0.15s;
+}
+
+.note-page__back:hover {
+  color: var(--color-primary);
+}
+
+.note-page__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.note-page__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.note-page__btn--edit {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.note-page__btn--edit:hover {
+  background: var(--color-primary-hover);
+}
+
+.note-page__btn--delete {
+  background: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.note-page__btn--delete:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.note-page__btn--save {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.note-page__btn--save:hover {
+  opacity: 0.9;
+}
+
+.note-page__btn--cancel {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.note-page__btn--cancel:hover {
+  background: var(--color-surface);
+}
+
+.note-page__category-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.note-page__cat-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.note-page__cat-select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.note-page__cat-select:focus {
+  border-color: var(--color-primary);
+}
+
+.note-page__cat-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  margin-bottom: var(--spacing-md);
+}
+
+.note-page__content {
+  color: var(--color-text);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.note-page__content h1,
+.note-page__content h2,
+.note-page__content h3,
+.note-page__content h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--color-text);
+}
+
+.note-page__content p {
+  margin: 0 0 1em 0;
+}
+
+.note-page__content code {
+  background: var(--color-surface);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.note-page__content pre {
+  background: var(--color-surface);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+}
+
+.note-page__content pre code {
+  background: none;
+  padding: 0;
+}
+
+.note-page__content blockquote {
+  border-left: 3px solid var(--color-primary);
+  margin-left: 0;
+  padding-left: var(--spacing-md);
+  color: var(--color-text-secondary);
+}
+
+.note-page__content img {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.note-page__content a {
+  color: var(--color-primary);
+}
+
+.note-page__loading {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xl);
+}
