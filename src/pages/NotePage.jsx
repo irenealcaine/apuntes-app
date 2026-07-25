@@ -1,13 +1,50 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, Children } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX } from "react-icons/fi"
 import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import { Highlight, themes } from "prism-react-renderer"
 import MDEditor from "@uiw/react-md-editor"
 import { getApunte, updateApunte, deleteApunte } from "../services/firebase"
 import { useCategorias } from "../context/CategoriasContext"
 import { useTheme } from "../context/ThemeContext"
 import ConfirmDialog from "../components/ConfirmDialog"
 import "./NotePage.css"
+
+function CodeBlock({ className, code, themeMode }) {
+  const language = className ? className.replace(/language-/, "") : ""
+  const prismTheme = themeMode === "dark" ? themes.nightOwl : themes.github
+
+  if (!language) {
+    return (
+      <pre className="note-page__code-plain">
+        <code>{code}</code>
+      </pre>
+    )
+  }
+
+  return (
+    <Highlight theme={prismTheme} code={code} language={language}>
+      {({ style, tokens, getLineProps, getTokenProps }) => (
+        <pre style={style} className="note-page__code-highlighted">
+          {tokens.map((line, i) => {
+            const lineProps = getLineProps({ line })
+            return (
+              <div key={i} {...lineProps} className="note-page__code-line">
+                <span className="note-page__code-num">{i + 1}</span>
+                <span className="note-page__code-content">
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token })} />
+                  ))}
+                </span>
+              </div>
+            )
+          })}
+        </pre>
+      )}
+    </Highlight>
+  )
+}
 
 function extraerTitulo(contenido) {
   const linea = contenido?.split("\n").find((l) => l.trim().startsWith("# "))
@@ -139,7 +176,29 @@ export default function NotePage() {
           {catActual && (
             <span className="note-page__cat-tag">{catActual.nombre}</span>
           )}
-          <ReactMarkdown>{apunte.contenido || ""}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code({ inline, className, children }) {
+                if (inline) {
+                  return <code className="note-page__code-inline">{children}</code>
+                }
+                return <code className={className}>{children}</code>
+              },
+              pre({ children }) {
+                const codeEl = Children.only(children)
+                return (
+                  <CodeBlock
+                    className={codeEl.props.className}
+                    code={String(codeEl.props.children).replace(/\n$/, "")}
+                    themeMode={theme}
+                  />
+                )
+              },
+            }}
+          >
+            {apunte.contenido || ""}
+          </ReactMarkdown>
         </div>
       )}
 

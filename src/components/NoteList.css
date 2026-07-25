@@ -8,6 +8,9 @@
   grid-column: 1 / -1;
   text-align: center;
   color: var(--color-text-secondary);
-  padding: var(--spacing-xl);
-  font-size: 1rem;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  font-size: 0.95rem;
+  background: var(--color-bg-card);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
 }
