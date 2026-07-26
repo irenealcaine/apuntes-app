@@ -406,7 +406,7 @@
 
   .category-sidebar__search-icon {
     left: calc(var(--spacing-sm) + 10px);
-    top: 8px;
+    top: 13px;
   }
 
   .category-sidebar__item {
