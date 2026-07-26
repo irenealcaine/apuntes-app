@@ -15,14 +15,6 @@ export default function NoteCard({ apunte, onDelete }) {
 
   const titulo = apunte.titulo || extraerTitulo(apunte.contenido) || "Apunte nuevo"
 
-  const preview =
-    apunte.contenido
-      ?.replace(/[#*`[\]]/g, "")
-      .split("\n")
-      .slice(titulo ? 1 : 0, 4)
-      .join(" ")
-      .substring(0, 150) || ""
-
   const fecha = apunte.createdAt?.toDate
     ? apunte.createdAt.toDate().toLocaleDateString("es-ES")
     : ""
@@ -60,10 +52,7 @@ export default function NoteCard({ apunte, onDelete }) {
       className="note-card"
       onClick={() => navigate(`/apunte/${apunte.id}`)}
     >
-      <div className="note-card__text">
-        <h3 className="note-card__title">{titulo}</h3>
-        <p className="note-card__preview">{preview}</p>
-      </div>
+      <h3 className="note-card__title">{titulo}</h3>
       {fecha && <span className="note-card__date">{fecha}</span>}
       {onDelete && (
         <button
