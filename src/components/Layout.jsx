@@ -10,7 +10,7 @@ import "./Layout.css"
 export default function Layout() {
   const location = useLocation()
   const isNotePage = location.pathname.startsWith("/apunte/")
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
   const showSidebar = sidebarOpen && !isNotePage
 
   return (

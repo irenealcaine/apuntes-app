@@ -7,7 +7,7 @@ export default function Footer() {
 
   return (
     <footer className="footer">
-      <span className="footer__text">Apuntes App &mdash; tus apuntes en markdown</span>
+      <span className="footer__text"></span>
       <div className="footer__actions">
         <button
           className="footer__theme-btn"

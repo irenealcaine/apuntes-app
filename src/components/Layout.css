@@ -41,4 +41,8 @@
   .layout__body {
     flex-direction: column;
   }
+
+  .layout__menu-btn {
+    margin: var(--spacing-sm);
+  }
 }

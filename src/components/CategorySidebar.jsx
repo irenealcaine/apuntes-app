@@ -146,26 +146,28 @@ export default function CategorySidebar({ open }) {
               >
                 {cat.nombre}
               </button>
-              <button
-                className="category-sidebar__edit-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  startEdit(cat)
-                }}
-                title="Renombrar"
-              >
-                <FiEdit2 size={12} />
-              </button>
-              <button
-                className="category-sidebar__del-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setDeleteTarget(cat)
-                }}
-                title="Eliminar categoría"
-              >
-                <FiTrash2 size={14} />
-              </button>
+              <div className="category-sidebar__actions">
+                <button
+                  className="category-sidebar__edit-btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    startEdit(cat)
+                  }}
+                  title="Renombrar"
+                >
+                  <FiEdit2 size={12} />
+                </button>
+                <button
+                  className="category-sidebar__del-btn"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setDeleteTarget(cat)
+                  }}
+                  title="Eliminar categoría"
+                >
+                  <FiTrash2 size={14} />
+                </button>
+              </div>
             </>
           )}
         </div>
