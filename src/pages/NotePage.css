@@ -504,14 +504,11 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  margin: 0.4em 0;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  transition: background 0.15s;
+  margin: 0.3em 0;
 }
 
 .note-page__content .task-list-item:hover {
-  background: var(--color-primary-soft);
+  background: transparent;
 }
 
 .note-page__content .task-list-item input[type="checkbox"] {

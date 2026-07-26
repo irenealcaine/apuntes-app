@@ -1,16 +1,12 @@
 .note-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .note-list__empty {
-  grid-column: 1 / -1;
   text-align: center;
   color: var(--color-text-secondary);
   padding: var(--spacing-2xl) var(--spacing-xl);
   font-size: 0.95rem;
-  background: var(--color-bg-card);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
 }
