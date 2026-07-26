@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { FiPlus } from "react-icons/fi"
-import { getApuntes, addApunte } from "../services/firebase"
+import { getApuntes, addApunte, deleteApunte } from "../services/firebase"
 import { useAuth } from "../context/AuthContext"
 import { useCategorias } from "../context/CategoriasContext"
 import NoteList from "../components/NoteList"
@@ -10,7 +10,7 @@ import "./HomePage.css"
 export default function HomePage() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { categorias, activeId } = useCategorias()
+  const { categorias, activeId, archivadosId } = useCategorias()
   const [searchParams] = useSearchParams()
   const search = searchParams.get("q") || ""
   const [apuntes, setApuntes] = useState([])
@@ -26,14 +26,18 @@ export default function HomePage() {
   }, [user, activeId])
 
   const filtrados = useMemo(() => {
-    if (!search) return apuntes
+    let items = apuntes
+    if (!activeId && archivadosId) {
+      items = items.filter((a) => a.categoriaId !== archivadosId)
+    }
+    if (!search) return items
     const q = search.toLowerCase()
-    return apuntes.filter(
+    return items.filter(
       (a) =>
         (a.titulo || "").toLowerCase().includes(q) ||
         (a.contenido || "").toLowerCase().includes(q)
     )
-  }, [apuntes, search])
+  }, [apuntes, search, activeId, archivadosId])
 
   async function handleNuevoApunte() {
     const catId = activeId || (categorias.length > 0 ? categorias[0].id : null)
@@ -52,13 +56,20 @@ export default function HomePage() {
     navigate(`/apunte/${doc.id}`)
   }
 
+  async function handleDeleteNote(id) {
+    await deleteApunte(id)
+    setApuntes((prev) => prev.filter((a) => a.id !== id))
+  }
+
   return (
     <div className="home-page">
       <div className="home-page__header">
         <h1>
-          {activeId
-            ? categorias.find((c) => c.id === activeId)?.nombre
-            : "Todos los apuntes"}
+          {activeId === archivadosId
+            ? "Archivados"
+            : activeId
+              ? categorias.find((c) => c.id === activeId)?.nombre
+              : "Todos los apuntes"}
         </h1>
         <button className="home-page__add-btn" onClick={handleNuevoApunte}>
           <FiPlus size={18} /> Nuevo
@@ -69,7 +80,7 @@ export default function HomePage() {
       ) : filtrados.length === 0 && search ? (
         <p className="home-page__loading">Sin resultados para "{search}"</p>
       ) : (
-        <NoteList apuntes={filtrados} />
+        <NoteList apuntes={filtrados} onDelete={activeId === archivadosId ? handleDeleteNote : undefined} />
       )}
     </div>
   )

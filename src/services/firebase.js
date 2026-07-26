@@ -57,7 +57,7 @@ export async function getCategorias(uid) {
   const q = query(categoriasRef, where("userId", "==", uid))
   const snapshot = await getDocs(q)
   const cats = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-  cats.sort((a, b) => (a.orden || 0) - (b.orden || 0))
+  cats.sort((a, b) => a.nombre.localeCompare(b.nombre))
   return cats
 }
 
@@ -72,6 +72,10 @@ export async function addCategoria(uid, nombre) {
 
 export async function deleteCategoria(id) {
   await deleteDoc(doc(db, "categorias", id))
+}
+
+export async function renameCategoria(id, nombre) {
+  await updateDoc(doc(db, "categorias", id), { nombre })
 }
 
 export async function getApuntes(uid, categoriaId) {
@@ -110,7 +114,9 @@ export async function addApunte({ uid, titulo, contenido, categoriaId }) {
 }
 
 export async function updateApunte(id, { titulo, contenido, categoriaId }) {
-  const data = { titulo, contenido, updatedAt: serverTimestamp() }
+  const data = { updatedAt: serverTimestamp() }
+  if (titulo !== undefined) data.titulo = titulo
+  if (contenido !== undefined) data.contenido = contenido
   if (categoriaId !== undefined) data.categoriaId = categoriaId
   await updateDoc(doc(db, "apuntes", id), data)
 }

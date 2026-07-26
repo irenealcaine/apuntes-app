@@ -1,7 +1,7 @@
 import NoteCard from "./NoteCard"
 import "./NoteList.css"
 
-export default function NoteList({ apuntes }) {
+export default function NoteList({ apuntes, onDelete }) {
   if (apuntes.length === 0) {
     return (
       <div className="note-list">
@@ -15,7 +15,7 @@ export default function NoteList({ apuntes }) {
   return (
     <div className="note-list">
       {apuntes.map((apunte) => (
-        <NoteCard key={apunte.id} apunte={apunte} />
+        <NoteCard key={apunte.id} apunte={apunte} onDelete={onDelete} />
       ))}
     </div>
   )

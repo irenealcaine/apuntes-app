@@ -1,6 +1,6 @@
 import { useState, useEffect, Children, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy } from "react-icons/fi"
+import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy, FiArchive } from "react-icons/fi"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Highlight, themes } from "prism-react-renderer"
@@ -136,7 +136,7 @@ function extraerTitulo(contenido) {
 export default function NotePage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { categorias } = useCategorias()
+  const { categorias, archivadosId } = useCategorias()
   const { theme } = useTheme()
 
   const [apunte, setApunte] = useState(null)
@@ -144,7 +144,7 @@ export default function NotePage() {
   const [loading, setLoading] = useState(true)
   const [editando, setEditando] = useState(false)
   const [contenido, setContenido] = useState("")
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmAction, setConfirmAction] = useState(null) // null | 'archive' | 'delete'
 
   useEffect(() => {
     getApunte(id).then((data) => {
@@ -173,6 +173,12 @@ export default function NotePage() {
     setCategoriaId(apunte.categoriaId || "")
     setContenido(apunte.contenido || "")
     setEditando(false)
+  }
+
+  async function handleArchive() {
+    if (!archivadosId) return
+    await updateApunte(id, { categoriaId: archivadosId })
+    navigate("/", { replace: true })
   }
 
   async function handleDelete() {
@@ -217,12 +223,21 @@ export default function NotePage() {
               >
                 <FiEdit2 size={16} /> Editar
               </button>
-              <button
-                className="note-page__btn note-page__btn--delete"
-                onClick={() => setConfirmDelete(true)}
-              >
-                <FiTrash2 size={16} /> Eliminar
-              </button>
+              {categoriaId === archivadosId ? (
+                <button
+                  className="note-page__btn note-page__btn--delete"
+                  onClick={() => setConfirmAction("delete")}
+                >
+                  <FiTrash2 size={16} /> Eliminar definitivamente
+                </button>
+              ) : archivadosId ? (
+                <button
+                  className="note-page__btn note-page__btn--archive"
+                  onClick={() => setConfirmAction("archive")}
+                >
+                  <FiArchive size={16} /> Archivar
+                </button>
+              ) : null}
             </>
           )}
         </div>
@@ -288,11 +303,20 @@ export default function NotePage() {
         </div>
       )}
 
-      {confirmDelete && (
+      {confirmAction === "delete" && (
         <ConfirmDialog
-          message="¿Estás seguro de que quieres eliminar este apunte? Esta acción no se puede deshacer."
+          message="¿Estás seguro de que quieres eliminar este apunte definitivamente? Esta acción no se puede deshacer."
+          confirmText="Eliminar"
           onConfirm={handleDelete}
-          onCancel={() => setConfirmDelete(false)}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
+      {confirmAction === "archive" && archivadosId && (
+        <ConfirmDialog
+          message="¿Archivar este apunte? Se moverá a la categoría Archivados."
+          confirmText="Archivar"
+          onConfirm={handleArchive}
+          onCancel={() => setConfirmAction(null)}
         />
       )}
     </div>
