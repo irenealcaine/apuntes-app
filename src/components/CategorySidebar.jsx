@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { FiPlus, FiTrash2, FiLogOut } from "react-icons/fi"
+import { useSearchParams } from "react-router-dom"
+import { FiPlus, FiTrash2, FiLogOut, FiSearch } from "react-icons/fi"
 import { useCategorias } from "../context/CategoriasContext"
 import { useAuth } from "../context/AuthContext"
 import ConfirmDialog from "./ConfirmDialog"
@@ -9,10 +10,20 @@ export default function CategorySidebar({ open }) {
   const { categorias, activeId, setActiveId, handleCreate, handleDelete } =
     useCategorias()
   const { user, logout } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get("q") || ""
 
   const [nueva, setNueva] = useState("")
   const [mostrarInput, setMostrarInput] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
+
+  function setSearch(value) {
+    if (value) {
+      setSearchParams({ q: value })
+    } else {
+      setSearchParams({})
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -53,6 +64,16 @@ export default function CategorySidebar({ open }) {
           />
         </form>
       )}
+
+      <div className="category-sidebar__search">
+        <FiSearch size={14} className="category-sidebar__search-icon" />
+        <input
+          className="category-sidebar__search-input"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar apuntes..."
+        />
+      </div>
 
       <button
         className={`category-sidebar__item${!activeId ? " category-sidebar__item--active" : ""}`}

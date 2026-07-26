@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect, useMemo } from "react"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { FiPlus } from "react-icons/fi"
 import { getApuntes, addApunte } from "../services/firebase"
 import { useAuth } from "../context/AuthContext"
@@ -11,6 +11,8 @@ export default function HomePage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { categorias, activeId } = useCategorias()
+  const [searchParams] = useSearchParams()
+  const search = searchParams.get("q") || ""
   const [apuntes, setApuntes] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -22,6 +24,16 @@ export default function HomePage() {
       setLoading(false)
     })
   }, [user, activeId])
+
+  const filtrados = useMemo(() => {
+    if (!search) return apuntes
+    const q = search.toLowerCase()
+    return apuntes.filter(
+      (a) =>
+        (a.titulo || "").toLowerCase().includes(q) ||
+        (a.contenido || "").toLowerCase().includes(q)
+    )
+  }, [apuntes, search])
 
   async function handleNuevoApunte() {
     const catId = activeId || (categorias.length > 0 ? categorias[0].id : null)
@@ -52,7 +64,13 @@ export default function HomePage() {
           <FiPlus size={18} /> Nuevo
         </button>
       </div>
-      {loading ? <p className="home-page__loading">Cargando...</p> : <NoteList apuntes={apuntes} />}
+      {loading ? (
+        <p className="home-page__loading">Cargando...</p>
+      ) : filtrados.length === 0 && search ? (
+        <p className="home-page__loading">Sin resultados para "{search}"</p>
+      ) : (
+        <NoteList apuntes={filtrados} />
+      )}
     </div>
   )
 }
