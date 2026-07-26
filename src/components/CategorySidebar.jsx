@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext"
 import ConfirmDialog from "./ConfirmDialog"
 import "./CategorySidebar.css"
 
-export default function CategorySidebar() {
+export default function CategorySidebar({ open }) {
   const { categorias, activeId, setActiveId, handleCreate, handleDelete } =
     useCategorias()
   const { user, logout } = useAuth()
@@ -30,7 +30,7 @@ export default function CategorySidebar() {
   }
 
   return (
-    <nav className="category-sidebar">
+    <nav className={`category-sidebar${open ? "" : " category-sidebar--hidden"}`}>
       <div className="category-sidebar__header">
         <h2 className="category-sidebar__title">Categorías</h2>
         <button

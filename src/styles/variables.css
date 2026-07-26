@@ -17,6 +17,8 @@
   --color-accent-soft: rgba(255, 184, 0, 0.1);
   --color-violet: #b388ff;
   --color-violet-soft: rgba(179, 136, 255, 0.08);
+  --color-warning: #ff8800;
+  --color-warning-soft: rgba(255, 136, 0, 0.1);
 
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.5);
   --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.7);
@@ -42,6 +44,8 @@
   --color-accent-soft: #e6f7fb;
   --color-violet: #6b4ce6;
   --color-violet-soft: #f0edfe;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
 
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.06);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.08);

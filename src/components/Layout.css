@@ -16,6 +16,27 @@
   min-width: 0;
 }
 
+.layout__menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin: var(--spacing-md) var(--spacing-md) 0 var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.layout__menu-btn:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
 @media (max-width: 768px) {
   .layout__body {
     flex-direction: column;

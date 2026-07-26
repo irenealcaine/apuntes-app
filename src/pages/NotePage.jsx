@@ -1,6 +1,6 @@
-import { useState, useEffect, Children } from "react"
+import { useState, useEffect, Children, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX } from "react-icons/fi"
+import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy } from "react-icons/fi"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Highlight, themes } from "prism-react-renderer"
@@ -11,36 +11,118 @@ import { useTheme } from "../context/ThemeContext"
 import ConfirmDialog from "../components/ConfirmDialog"
 import "./NotePage.css"
 
+const CALLOUT_LABELS = {
+  note: "Nota",
+  tip: "Consejo",
+  important: "Importante",
+  warning: "Advertencia",
+  caution: "Cuidado",
+}
+
+function rehypeCallout() {
+  return (tree) => {
+    function findCallout(node) {
+      if (node.type === "text") {
+        const m = node.value.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/)
+        if (m) return m[1].toLowerCase()
+      }
+      if (node.children) {
+        for (const child of node.children) {
+          const result = findCallout(child)
+          if (result) return result
+        }
+      }
+      return null
+    }
+
+    function removeCalloutMarker(node) {
+      if (node.type === "text") {
+        node.value = node.value.replace(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/, "")
+      }
+      if (node.children) {
+        for (const child of node.children) removeCalloutMarker(child)
+      }
+    }
+
+    function walk(node) {
+      if (node.type === "element" && node.tagName === "blockquote") {
+        const type = findCallout(node)
+        node.properties = node.properties || {}
+        if (type) {
+          node.properties.className = `note-page__callout note-page__callout--${type}`
+          removeCalloutMarker(node)
+          node.children.unshift({
+            type: "element",
+            tagName: "strong",
+            properties: { className: "note-page__callout-label" },
+            children: [{ type: "text", value: CALLOUT_LABELS[type] }],
+          })
+        } else {
+          node.properties.className = "note-page__blockquote"
+        }
+      }
+      if (node.children) {
+        for (const child of node.children) walk(child)
+      }
+    }
+    walk(tree)
+  }
+}
+
 function CodeBlock({ className, code, themeMode }) {
+  const [copied, setCopied] = useState(false)
   const language = className ? className.replace(/language-/, "") : ""
   const prismTheme = themeMode === "dark" ? themes.nightOwl : themes.github
 
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }, [code])
+
+  const copyBtn = (
+    <button
+      className={`note-page__code-copy${copied ? " note-page__code-copy--copied" : ""}`}
+      onClick={handleCopy}
+      title="Copiar al portapapeles"
+    >
+      <FiCopy size={14} />
+      <span>{copied ? "Copiado" : "Copiar"}</span>
+    </button>
+  )
+
   if (!language) {
     return (
-      <pre className="note-page__code-plain">
-        <code>{code}</code>
-      </pre>
+      <div className="note-page__code-wrapper">
+        <pre className="note-page__code-plain">
+          <code>{code}</code>
+        </pre>
+        {copyBtn}
+      </div>
     )
   }
 
   return (
     <Highlight theme={prismTheme} code={code} language={language}>
       {({ style, tokens, getLineProps, getTokenProps }) => (
-        <pre style={style} className="note-page__code-highlighted">
-          {tokens.map((line, i) => {
-            const lineProps = getLineProps({ line })
-            return (
-              <div key={i} {...lineProps} className="note-page__code-line">
-                <span className="note-page__code-num">{i + 1}</span>
-                <span className="note-page__code-content">
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token })} />
-                  ))}
-                </span>
-              </div>
-            )
-          })}
-        </pre>
+        <div className="note-page__code-wrapper">
+          <pre style={style} className="note-page__code-highlighted">
+            {tokens.map((line, i) => {
+              const lineProps = getLineProps({ line })
+              return (
+                <div key={i} {...lineProps} className="note-page__code-line">
+                  <span className="note-page__code-num">{i + 1}</span>
+                  <span className="note-page__code-content">
+                    {line.map((token, key) => (
+                      <span key={key} {...getTokenProps({ token })} />
+                    ))}
+                  </span>
+                </div>
+              )
+            })}
+          </pre>
+          {copyBtn}
+        </div>
       )}
     </Highlight>
   )
@@ -168,6 +250,9 @@ export default function NotePage() {
               onChange={setContenido}
               height={500}
               preview="live"
+              previewOptions={{
+                rehypePlugins: [rehypeCallout],
+              }}
             />
           </div>
         </>
@@ -178,6 +263,7 @@ export default function NotePage() {
           )}
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeCallout]}
             components={{
               code({ inline, className, children }) {
                 if (inline) {

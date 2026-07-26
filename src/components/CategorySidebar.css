@@ -8,6 +8,15 @@
   border-right: 1px solid var(--color-border);
   overflow-y: auto;
   background: var(--color-bg-secondary);
+  transition: width 0.25s ease, padding 0.25s ease, border 0.25s ease;
+}
+
+.category-sidebar--hidden {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  border-right: none;
+  flex-shrink: 1;
 }
 
 .category-sidebar__header {
