@@ -9,6 +9,7 @@ import { getApunte, updateApunte, deleteApunte } from "../services/firebase"
 import { useCategorias } from "../context/CategoriasContext"
 import { useTheme } from "../context/ThemeContext"
 import ConfirmDialog from "../components/ConfirmDialog"
+import TableOfContents, { extractHeadings, rehypeAddIds } from "../components/TableOfContents"
 import "./NotePage.css"
 
 const CALLOUT_LABELS = {
@@ -191,6 +192,7 @@ export default function NotePage() {
   }
 
   const catActual = categorias.find((c) => c.id === categoriaId)
+  const headings = extractHeadings(apunte?.contenido)
 
   return (
     <div className="note-page">
@@ -272,34 +274,37 @@ export default function NotePage() {
           </div>
         </>
       ) : (
-        <div className="note-page__content">
-          {catActual && (
-            <span className="note-page__cat-tag">{catActual.nombre}</span>
-          )}
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeCallout]}
-            components={{
-              code({ inline, className, children }) {
-                if (inline) {
-                  return <code className="note-page__code-inline">{children}</code>
-                }
-                return <code className={className}>{children}</code>
-              },
-              pre({ children }) {
-                const codeEl = Children.only(children)
-                return (
-                  <CodeBlock
-                    className={codeEl.props.className}
-                    code={String(codeEl.props.children).replace(/\n$/, "")}
-                    themeMode={theme}
-                  />
-                )
-              },
-            }}
-          >
-            {apunte.contenido || ""}
-          </ReactMarkdown>
+        <div className="note-page__view">
+          <div className="note-page__content">
+            {catActual && (
+              <span className="note-page__cat-tag">{catActual.nombre}</span>
+            )}
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeCallout, rehypeAddIds]}
+              components={{
+                code({ inline, className, children }) {
+                  if (inline) {
+                    return <code className="note-page__code-inline">{children}</code>
+                  }
+                  return <code className={className}>{children}</code>
+                },
+                pre({ children }) {
+                  const codeEl = Children.only(children)
+                  return (
+                    <CodeBlock
+                      className={codeEl.props.className}
+                      code={String(codeEl.props.children).replace(/\n$/, "")}
+                      themeMode={theme}
+                    />
+                  )
+                },
+              }}
+            >
+              {apunte.contenido || ""}
+            </ReactMarkdown>
+          </div>
+          <TableOfContents headings={headings} />
         </div>
       )}
 
