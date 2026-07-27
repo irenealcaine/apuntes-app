@@ -1,17 +1,20 @@
-import { useState } from "react"
-import { useSearchParams } from "react-router-dom"
-import { FiPlus, FiTrash2, FiLogOut, FiSearch, FiEdit2, FiCheck, FiX, FiArchive, FiInbox } from "react-icons/fi"
+import { useState, useRef } from "react"
+import { useSearchParams, useNavigate } from "react-router-dom"
+import { FiPlus, FiTrash2, FiLogOut, FiSearch, FiEdit2, FiCheck, FiX, FiArchive, FiInbox, FiUpload, FiFileText } from "react-icons/fi"
+import { addApunte } from "../services/firebase"
 import { useCategorias } from "../context/CategoriasContext"
 import { useAuth } from "../context/AuthContext"
 import ConfirmDialog from "./ConfirmDialog"
 import "./CategorySidebar.css"
 
 export default function CategorySidebar({ open }) {
+  const navigate = useNavigate()
   const { categorias, activeId, setActiveId, handleCreate, handleDelete, handleRename, archivadosId } =
     useCategorias()
   const { user, logout } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const search = searchParams.get("q") || ""
+  const fileInputRef = useRef(null)
 
   const [nueva, setNueva] = useState("")
   const [mostrarInput, setMostrarInput] = useState(false)
@@ -58,6 +61,48 @@ export default function CategorySidebar({ open }) {
     handleRename(editTarget, nombre)
     setEditTarget(null)
     setEditValue("")
+  }
+
+  async function handleNuevoApunte() {
+    const catId = activeId || (categorias.length > 0 ? categorias[0].id : null)
+    if (!catId) {
+      alert("Primero crea una categoría.")
+      return
+    }
+    const doc = await addApunte({
+      uid: user.uid,
+      titulo: "",
+      contenido: "",
+      categoriaId: catId,
+    })
+    navigate(`/apunte/${doc.id}`)
+  }
+
+  async function handleImportMd() {
+    fileInputRef.current?.click()
+  }
+
+  async function handleFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const catId = activeId || (categorias.length > 0 ? categorias[0].id : null)
+    if (!catId) {
+      alert("Primero crea una categoría.")
+      return
+    }
+    try {
+      const contenido = await file.text()
+      const doc = await addApunte({
+        uid: user.uid,
+        titulo: "",
+        contenido,
+        categoriaId: catId,
+      })
+      navigate(`/apunte/${doc.id}`)
+    } catch {
+      alert("Error al leer el archivo.")
+    }
+    e.target.value = ""
   }
 
   return (
@@ -180,6 +225,24 @@ export default function CategorySidebar({ open }) {
           onCancel={() => setDeleteTarget(null)}
         />
       )}
+
+      <div className="category-sidebar__divider" />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".md"
+        onChange={handleFileChange}
+        className="category-sidebar__file-input"
+      />
+
+      <button className="category-sidebar__note-btn" onClick={handleNuevoApunte} title="Nuevo apunte">
+        <FiFileText size={16} /> <span>Nuevo</span>
+      </button>
+
+      <button className="category-sidebar__import-btn" onClick={handleImportMd} title="Importar archivo .md">
+        <FiUpload size={16} /> <span>Importar .md</span>
+      </button>
 
       <div className="category-sidebar__spacer" />
 

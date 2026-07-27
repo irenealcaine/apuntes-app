@@ -1,14 +1,12 @@
 import { useState, useEffect, useMemo } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { FiPlus } from "react-icons/fi"
-import { getApuntes, addApunte, deleteApunte } from "../services/firebase"
+import { useSearchParams } from "react-router-dom"
+import { getApuntes, deleteApunte } from "../services/firebase"
 import { useAuth } from "../context/AuthContext"
 import { useCategorias } from "../context/CategoriasContext"
 import NoteList from "../components/NoteList"
 import "./HomePage.css"
 
 export default function HomePage() {
-  const navigate = useNavigate()
   const { user } = useAuth()
   const { categorias, activeId, archivadosId } = useCategorias()
   const [searchParams] = useSearchParams()
@@ -39,23 +37,6 @@ export default function HomePage() {
     )
   }, [apuntes, search, activeId, archivadosId])
 
-  async function handleNuevoApunte() {
-    const catId = activeId || (categorias.length > 0 ? categorias[0].id : null)
-
-    if (!catId) {
-      alert("Primero crea una categoría.")
-      return
-    }
-
-    const doc = await addApunte({
-      uid: user.uid,
-      titulo: "",
-      contenido: "",
-      categoriaId: catId,
-    })
-    navigate(`/apunte/${doc.id}`)
-  }
-
   async function handleDeleteNote(id) {
     await deleteApunte(id)
     setApuntes((prev) => prev.filter((a) => a.id !== id))
@@ -71,9 +52,7 @@ export default function HomePage() {
               ? categorias.find((c) => c.id === activeId)?.nombre
               : "Todos los apuntes"}
         </h1>
-        <button className="home-page__add-btn" onClick={handleNuevoApunte}>
-          <FiPlus size={18} /> Nuevo
-        </button>
+
       </div>
       {loading ? (
         <p className="home-page__loading">Cargando...</p>
