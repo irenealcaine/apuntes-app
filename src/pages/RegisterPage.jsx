@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5"
 import { useAuth } from "../context/AuthContext"
 import "./AuthPage.css"
 
@@ -9,6 +10,7 @@ export default function RegisterPage() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -51,15 +53,25 @@ export default function RegisterPage() {
           </div>
           <div className="auth-form__field">
             <label className="auth-form__label">Contraseña</label>
-            <input
-              className="auth-form__input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mínimo 6 caracteres"
-              minLength={6}
-              required
-            />
+            <div className="auth-form__password-wrapper">
+              <input
+                className="auth-form__input"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                minLength={6}
+                required
+              />
+              <button
+                type="button"
+                className="auth-form__toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              </button>
+            </div>
           </div>
           <button className="auth-form__submit" disabled={loading}>
             {loading ? "Creando cuenta..." : "Registrarse"}

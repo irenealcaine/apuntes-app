@@ -54,6 +54,7 @@
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .auth-form__input:focus {
@@ -137,4 +138,36 @@
   font-size: 0.85rem;
   text-align: center;
   margin-bottom: var(--spacing-md);
+}
+
+.auth-form__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.auth-form__password-wrapper .auth-form__input {
+  width: 100%;
+  padding-right: 44px;
+  box-sizing: border-box;
+}
+
+.auth-form__toggle-password {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.auth-form__toggle-password:hover {
+  color: var(--color-text);
 }

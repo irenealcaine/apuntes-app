@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5"
 import { useAuth } from "../context/AuthContext"
 import "./AuthPage.css"
 
@@ -9,6 +10,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -47,14 +49,24 @@ export default function LoginPage() {
           </div>
           <div className="auth-form__field">
             <label className="auth-form__label">Contraseña</label>
-            <input
-              className="auth-form__input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            <div className="auth-form__password-wrapper">
+              <input
+                className="auth-form__input"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                className="auth-form__toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+              </button>
+            </div>
           </div>
           <button className="auth-form__submit" disabled={loading}>
             {loading ? "Entrando..." : "Entrar"}
