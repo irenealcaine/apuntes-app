@@ -121,3 +121,20 @@
 .auth-card__link a:hover {
   opacity: 0.8;
 }
+
+.auth-card__description {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.auth-card__success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}

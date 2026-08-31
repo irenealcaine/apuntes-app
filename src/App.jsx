@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage"
 import NotePage from "./pages/NotePage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import "./App.css"
 
 function GuestRoute({ children }) {
@@ -33,6 +34,14 @@ export default function App() {
             element={
               <GuestRoute>
                 <RegisterPage />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <GuestRoute>
+                <ForgotPasswordPage />
               </GuestRoute>
             }
           />

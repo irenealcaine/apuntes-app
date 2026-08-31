@@ -18,6 +18,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth"
 
 const firebaseConfig = {
@@ -123,4 +124,8 @@ export async function updateApunte(id, { titulo, contenido, categoriaId }) {
 
 export async function deleteApunte(id) {
   await deleteDoc(doc(db, "apuntes", id))
+}
+
+export async function resetPassword(email) {
+  await sendPasswordResetEmail(auth, email)
 }
