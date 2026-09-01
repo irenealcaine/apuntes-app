@@ -578,7 +578,7 @@
   right: var(--spacing-2xl);
   top: 150px;
   width: 220px;
-  max-height: calc(100vh - var(--spacing-2xl) * 2);
+  max-height: calc(85vh - var(--spacing-2xl) * 2);
   overflow-y: auto;
 }
 
