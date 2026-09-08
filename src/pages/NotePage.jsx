@@ -1,6 +1,6 @@
 import { useState, useEffect, Children, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy, FiArchive } from "react-icons/fi"
+import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy, FiArchive, FiDownload } from "react-icons/fi"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Highlight, themes } from "prism-react-renderer"
@@ -188,6 +188,28 @@ export default function NotePage() {
     navigate("/", { replace: true })
   }
 
+  function handleDownload() {
+    const markdown = editando ? contenido : apunte?.contenido || ""
+    const titulo = extraerTitulo(markdown) || apunte?.titulo || "apunte"
+    const nombreArchivo =
+      titulo
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\w\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .toLowerCase() || "apunte"
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${nombreArchivo}.md`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   if (loading) {
     return <p className="note-page__loading">Cargando...</p>
   }
@@ -203,6 +225,13 @@ export default function NotePage() {
         </button>
 
         <div className="note-page__actions">
+          <button
+            className="note-page__btn note-page__btn--download"
+            onClick={handleDownload}
+            title="Descargar como archivo Markdown (.md)"
+          >
+            <FiDownload size={16} /> Descargar .md
+          </button>
           {editando ? (
             <>
               <button
