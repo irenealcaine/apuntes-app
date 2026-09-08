@@ -674,4 +674,20 @@
     margin: 0 auto;
     padding: var(--spacing-lg);
   }
+
+  .note-page__header {
+    gap: var(--spacing-sm);
+  }
+
+  .note-page__actions {
+    gap: var(--spacing-xs);
+  }
+
+  .note-page__btn--icon-only-mobile .note-page__btn-text {
+    display: none;
+  }
+
+  .note-page__btn--icon-only-mobile {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
 }

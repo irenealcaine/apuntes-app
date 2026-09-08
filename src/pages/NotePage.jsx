@@ -226,11 +226,13 @@ export default function NotePage() {
 
         <div className="note-page__actions">
           <button
-            className="note-page__btn note-page__btn--download"
+            className="note-page__btn note-page__btn--download note-page__btn--icon-only-mobile"
             onClick={handleDownload}
             title="Descargar como archivo Markdown (.md)"
+            aria-label="Descargar como archivo Markdown (.md)"
           >
-            <FiDownload size={16} /> Descargar .md
+            <FiDownload size={16} />
+            <span className="note-page__btn-text">Descargar .md</span>
           </button>
           {editando ? (
             <>
@@ -250,10 +252,13 @@ export default function NotePage() {
           ) : (
             <>
               <button
-                className="note-page__btn note-page__btn--edit"
+                className="note-page__btn note-page__btn--edit note-page__btn--icon-only-mobile"
                 onClick={() => setEditando(true)}
+                title="Editar"
+                aria-label="Editar"
               >
-                <FiEdit2 size={16} /> Editar
+                <FiEdit2 size={16} />
+                <span className="note-page__btn-text">Editar</span>
               </button>
               {categoriaId === archivadosId ? (
                 <button
@@ -264,10 +269,13 @@ export default function NotePage() {
                 </button>
               ) : archivadosId ? (
                 <button
-                  className="note-page__btn note-page__btn--archive"
+                  className="note-page__btn note-page__btn--archive note-page__btn--icon-only-mobile"
                   onClick={() => setConfirmAction("archive")}
+                  title="Archivar"
+                  aria-label="Archivar"
                 >
-                  <FiArchive size={16} /> Archivar
+                  <FiArchive size={16} />
+                  <span className="note-page__btn-text">Archivar</span>
                 </button>
               ) : null}
             </>
