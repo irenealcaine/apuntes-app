@@ -1,6 +1,6 @@
 import { useState, useEffect, Children, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy, FiArchive, FiDownload } from "react-icons/fi"
+import { FiArrowLeft, FiEdit2, FiTrash2, FiSave, FiX, FiCopy, FiCheck, FiArchive, FiDownload } from "react-icons/fi"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import { Highlight, themes } from "prism-react-renderer"
@@ -69,6 +69,48 @@ function rehypeCallout() {
     }
     walk(tree)
   }
+}
+
+function InlineCode({ children, className }) {
+  const [copied, setCopied] = useState(false)
+  const text = Children.toArray(children).join("")
+
+  const handleCopy = useCallback(async () => {
+    if (!text) return
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      const ta = document.createElement("textarea")
+      ta.value = text
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand("copy")
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1200)
+  }, [text])
+
+  return (
+    <code
+      className={`note-page__code-inline${copied ? " note-page__code-inline--copied" : ""}`}
+      onClick={handleCopy}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          handleCopy()
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      title={copied ? "¡Copiado!" : "Clic para copiar"}
+    >
+      <span className="note-page__code-inline-text">{children}</span>
+      <span className="note-page__code-inline-icon" aria-hidden="true">
+        {copied ? <FiCheck size={11} /> : <FiCopy size={11} />}
+      </span>
+    </code>
+  )
 }
 
 function CodeBlock({ className, code, themeMode }) {
@@ -321,11 +363,11 @@ export default function NotePage() {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeCallout, rehypeAddIds]}
               components={{
-                code({ inline, className, children }) {
-                  if (inline) {
-                    return <code className="note-page__code-inline">{children}</code>
-                  }
-                  return <code className={className}>{children}</code>
+                code({ className, children }) {
+                  // En react-markdown v9+ ya no existe la prop `inline`:
+                  // los bloques vienen envueltos en <pre> y los interceptamos
+                  // abajo, así que todo <code> que llega aquí es en línea.
+                  return <InlineCode className={className}>{children}</InlineCode>
                 },
                 pre({ children }) {
                   const codeEl = Children.only(children)

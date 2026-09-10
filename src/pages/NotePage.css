@@ -282,6 +282,55 @@
   font-size: 0.85em;
   color: var(--color-primary);
   display: inline;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.note-page__code-inline:hover {
+  border-color: var(--color-primary);
+}
+
+.note-page__code-inline:hover .note-page__code-inline-icon {
+  max-width: 20px;
+  margin-left: 5px;
+  opacity: 1;
+}
+
+.note-page__code-inline:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.note-page__code-inline:focus-visible .note-page__code-inline-icon {
+  max-width: 20px;
+  margin-left: 5px;
+  opacity: 1;
+}
+
+.note-page__code-inline--copied {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.note-page__code-inline--copied .note-page__code-inline-icon {
+  max-width: 20px;
+  margin-left: 5px;
+  opacity: 1;
+  color: inherit;
+}
+
+.note-page__code-inline-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  max-width: 0;
+  margin-left: 0;
+  margin-top: -2px;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s, color 0.2s, max-width 0.2s, margin-left 0.2s;
 }
 
 .note-page__content pre {
@@ -289,6 +338,7 @@
   font-family: var(--font-mono);
   margin: .5em 0;
   overflow-x: auto;
+  max-width: 100%;
 }
 
 .note-page__content code {
@@ -305,6 +355,7 @@
   color: var(--color-text);
   padding: 0 .5em;
   overflow-x: auto;
+  max-width: 100%;
 }
 
 .note-page__code-highlighted {
@@ -314,6 +365,7 @@
   line-height: 1.65;
   overflow-x: auto;
   margin: 1em 0;
+  max-width: 100%;
 }
 
 .note-page__code-line {
@@ -338,10 +390,15 @@
 .note-page__code-wrapper {
   position: relative;
   margin: 1em 0;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  min-width: min(150px, 100%);
 }
 
 .note-page__code-wrapper>pre {
   margin: 0;
+  max-width: 100%;
 }
 
 .note-page__code-copy {
