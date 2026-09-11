@@ -363,6 +363,29 @@ export default function NotePage() {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeCallout, rehypeAddIds]}
               components={{
+                li({ className, children, ...props }) {
+                  const isTask =
+                    className?.includes("task-list-item") ||
+                    "checked" in props
+                  if (!isTask) {
+                    return (
+                      <li className={className} {...props}>
+                        {children}
+                      </li>
+                    )
+                  }
+                  // En flexbox cada nodo de texto suelto se convierte en un
+                  // flex-item anónimo (efecto "tres columnas" en móvil).
+                  // Agrupamos todo menos el checkbox en un solo contenedor.
+                  const kids = Children.toArray(children)
+                  const [first, ...rest] = kids
+                  return (
+                    <li className={className} {...props}>
+                      {first}
+                      <span className="task-list-item-text">{rest}</span>
+                    </li>
+                  )
+                },
                 code({ className, children }) {
                   // En react-markdown v9+ ya no existe la prop `inline`:
                   // los bloques vienen envueltos en <pre> y los interceptamos
