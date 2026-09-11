@@ -44,24 +44,42 @@
 
 .note-page__actions {
   display: flex;
+  align-items: center;
   gap: var(--spacing-sm);
 }
 
 .note-page__btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border: none;
-  border-radius: var(--radius-sm);
+  padding: 9px var(--spacing-md);
+  border: 1px solid transparent;
+  border-radius: 4px;
   font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.note-page__btn:active {
+  transform: translateY(1px);
+}
+
+.note-page__btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.note-page__btn svg {
+  flex-shrink: 0;
 }
 
 .note-page__btn--edit {
   background: var(--color-primary);
+  border-color: transparent;
   color: #fff;
 }
 
@@ -90,6 +108,7 @@
 
 .note-page__btn--save {
   background: var(--color-primary);
+  border-color: transparent;
   color: #fff;
 }
 
@@ -102,38 +121,36 @@
 }
 
 .note-page__btn--cancel {
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  border-color: var(--color-border);
 }
 
 .note-page__btn--cancel:hover {
-  background: var(--color-surface);
   color: var(--color-text);
+  border-color: var(--color-text-secondary);
 }
 
 .note-page__btn--download {
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  border-color: var(--color-border);
 }
 
 .note-page__btn--download:hover {
-  background: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-primary);
+  border-color: var(--color-text-secondary);
 }
 
 .note-page__btn--archive {
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  border-color: var(--color-border);
 }
 
 .note-page__btn--archive:hover {
-  background: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-primary);
+  border-color: var(--color-text-secondary);
 }
 
 .note-page__category-selector {
@@ -771,6 +788,6 @@
   }
 
   .note-page__btn--icon-only-mobile {
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 9px 11px;
   }
 }

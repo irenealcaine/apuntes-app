@@ -339,15 +339,6 @@ export default function NotePage() {
         </button>
 
         <div className="note-page__actions">
-          <button
-            className="note-page__btn note-page__btn--download note-page__btn--icon-only-mobile"
-            onClick={handleDownload}
-            title="Descargar como archivo Markdown (.md)"
-            aria-label="Descargar como archivo Markdown (.md)"
-          >
-            <FiDownload size={16} />
-            <span className="note-page__btn-text">Descargar .md</span>
-          </button>
           {editando ? (
             <>
               <button
@@ -355,6 +346,15 @@ export default function NotePage() {
                 onClick={handleSave}
               >
                 <FiSave size={16} /> Guardar
+              </button>
+              <button
+                className="note-page__btn note-page__btn--download"
+                onClick={handleDownload}
+                title="Descargar como archivo Markdown (.md)"
+                aria-label="Descargar como archivo Markdown (.md)"
+              >
+                <FiDownload size={16} />
+                <span className="note-page__btn-text">Descargar .md</span>
               </button>
               <button
                 className="note-page__btn note-page__btn--cancel"
@@ -373,6 +373,15 @@ export default function NotePage() {
               >
                 <FiEdit2 size={16} />
                 <span className="note-page__btn-text">Editar</span>
+              </button>
+              <button
+                className="note-page__btn note-page__btn--download note-page__btn--icon-only-mobile"
+                onClick={handleDownload}
+                title="Descargar como archivo Markdown (.md)"
+                aria-label="Descargar como archivo Markdown (.md)"
+              >
+                <FiDownload size={16} />
+                <span className="note-page__btn-text">Descargar .md</span>
               </button>
               {categoriaId === archivadosId ? (
                 <button
