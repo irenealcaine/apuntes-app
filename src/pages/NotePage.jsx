@@ -71,6 +71,29 @@ function rehypeCallout() {
   }
 }
 
+// Numera cada checkbox de task-list en orden del documento para que el
+// onChange sepa exactamente qué línea del markdown debe alternar.
+// Es determinista (va en el AST), así no depende del orden de render.
+function rehypeTaskIndex() {
+  return (tree) => {
+    let idx = 0
+    function walk(node) {
+      if (
+        node.type === "element" &&
+        node.tagName === "input" &&
+        node.properties?.type === "checkbox"
+      ) {
+        // En hast las data-* van en kebab dentro de properties
+        node.properties = { ...node.properties, "data-task-index": idx++ }
+      }
+      if (node.children) {
+        for (const child of node.children) walk(child)
+      }
+    }
+    walk(tree)
+  }
+}
+
 function InlineCode({ children, className }) {
   const [copied, setCopied] = useState(false)
   const text = Children.toArray(children).join("")
@@ -177,6 +200,34 @@ function extraerTitulo(contenido) {
   return linea ? linea.trim().replace(/^#\s+/, "") : "Sin título"
 }
 
+// Cambia el n-ésimo task-list (`- [ ]` / `- [x]`) del markdown, ignorando
+// bloques de código vallados para que el orden coincida con lo renderizado.
+function toggleTaskInMarkdown(markdown, targetIndex) {
+  const lines = (markdown || "").split("\n")
+  let taskSeen = -1
+  let inFence = false
+  const taskRe =
+    /^(\s*(?:>\s*)*(?:[-*+]|\d+[.)])\s+)\[([ xX])\](\s.*|\s*)$/
+
+  const next = lines.map((line) => {
+    const trimmed = line.trimStart()
+    if (/^(```|~~~)/.test(trimmed)) {
+      inFence = !inFence
+      return line
+    }
+    if (inFence) return line
+    const m = line.match(taskRe)
+    if (!m) return line
+    taskSeen += 1
+    if (taskSeen !== targetIndex) return line
+    const mark = m[2] === " " ? "x" : " "
+    return `${m[1]}[${mark}]${m[3]}`
+  })
+
+  if (taskSeen < targetIndex) return null
+  return next.join("\n")
+}
+
 export default function NotePage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -189,6 +240,27 @@ export default function NotePage() {
   const [editando, setEditando] = useState(false)
   const [contenido, setContenido] = useState("")
   const [confirmAction, setConfirmAction] = useState(null) // null | 'archive' | 'delete'
+
+  // Permite marcar/desmarcar tasks sin entrar en edición.
+  // Actualización optimista + persistencia en Firestore.
+  const handleToggleTask = useCallback(
+    async (taskIndex) => {
+      if (!apunte) return
+      const prev = apunte.contenido || ""
+      const next = toggleTaskInMarkdown(prev, taskIndex)
+      if (next === null || next === prev) return
+      setApunte((p) => (p ? { ...p, contenido: next } : p))
+      setContenido(next)
+      try {
+        await updateApunte(id, { contenido: next })
+      } catch {
+        // Revertir si falla el guardado
+        setApunte((p) => (p ? { ...p, contenido: prev } : p))
+        setContenido(prev)
+      }
+    },
+    [apunte, id]
+  )
 
   useEffect(() => {
     getApunte(id).then((data) => {
@@ -361,8 +433,38 @@ export default function NotePage() {
             )}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeCallout, rehypeAddIds]}
+              rehypePlugins={[rehypeTaskIndex, rehypeCallout, rehypeAddIds]}
               components={{
+                input({ type, checked, disabled, node, ...props }) {
+                  if (type !== "checkbox") {
+                    return <input type={type} disabled={disabled} {...props} />
+                  }
+                  // remark-gfm los genera como disabled; los hacemos
+                  // interactivos y persistimos el cambio en el markdown.
+                  // El índice viene del AST (rehypeTaskIndex), no del orden
+                  // de render, así cada checkbox alterna su propia línea.
+                  const raw =
+                    props["data-task-index"] ??
+                    props.dataTaskIndex ??
+                    props.datataskindex
+                  const taskIndex = Number(raw)
+                  return (
+                    <input
+                      {...props}
+                      type="checkbox"
+                      checked={!!checked}
+                      onChange={() => {
+                        if (Number.isInteger(taskIndex) && taskIndex >= 0)
+                          handleToggleTask(taskIndex)
+                      }}
+                      aria-label={
+                        Number.isInteger(taskIndex) && taskIndex >= 0
+                          ? `Marcar tarea ${taskIndex + 1} como ${checked ? "pendiente" : "completada"}`
+                          : "Marcar tarea como completada"
+                      }
+                    />
+                  )
+                },
                 li({ className, children, ...props }) {
                   const isTask =
                     className?.includes("task-list-item") ||

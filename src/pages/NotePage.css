@@ -635,10 +635,10 @@
   -webkit-appearance: none;
   width: 18px;
   height: 18px;
-  cursor: default;
+  cursor: pointer;
   flex-shrink: 0;
   margin: 0;
-  margin-top: 0.35em;
+  margin-top: 0.25em;
   border: 2px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-surface);
@@ -646,6 +646,15 @@
   align-items: center;
   justify-content: center;
   transition: background 0.15s, border-color 0.15s;
+}
+
+.note-page__content .task-list-item input[type="checkbox"]:hover {
+  border-color: var(--color-primary);
+}
+
+.note-page__content .task-list-item:has(input[type="checkbox"]:checked) .task-list-item-text {
+  opacity: 0.6;
+  text-decoration: line-through;
 }
 
 .note-page__content .task-list-item input[type="checkbox"]:checked {
